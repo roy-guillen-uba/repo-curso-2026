@@ -1,0 +1,275 @@
+Script started on 2026-09-11 01:26:35-04:00 [COMMAND="env PS1="CLI> " TERM=dumb bash --noprofile --norc -i" TERM="dumb" TTY="/dev/console" COLUMNS="80" LINES="24"]
+CLI> # ECON-520 - Tarea 01: practica de CLI
+CLI> # 1. Ubicacion y rutas relativas y absolutas
+CLI> pwd
+/workspace/scratch/34544ea9fa5b
+CLI> cd /
+CLI> pwd
+/
+CLI> cd
+CLI> pwd
+/root
+CLI> cd /etc
+CLI> pwd
+/etc
+CLI> cd ..
+CLI> pwd
+/
+CLI> cd ~
+CLI> pwd
+/root
+CLI> # Carpeta temporal exclusiva para los ejercicios
+CLI> practica_dir=$(mktemp -d /tmp/econ520_tarea01_XXXXXX)
+CLI> cd "$practica_dir"
+CLI> pwd
+/tmp/econ520_tarea01_QVM4MJ
+CLI> # 2. Crear carpetas y archivos
+CLI> mkdir dir1 dir2 dir3
+CLI> mkdir -p dir4/dir5/dir6
+CLI> ls
+dir1  dir2  dir3  dir4
+CLI> cd dir4
+CLI> ls
+dir5
+CLI> cd dir5
+CLI> ls
+dir6
+CLI> cd ../..
+CLI> pwd
+/tmp/econ520_tarea01_QVM4MJ
+CLI> # Errores intencionales: argumentos faltantes o excesivos
+CLI> mkdir
+mkdir: missing operand
+Try 'mkdir --help' for more information.
+CLI> cd /etc /tmp
+bash: cd: too many arguments
+CLI> # Comillas para nombres con espacios
+CLI> mkdir otra carpeta
+CLI> mkdir "carpeta 1"
+CLI> mkdir 'carpeta 2'
+CLI> mkdir carpeta\ 3
+CLI> mkdir "carpeta 4" "carpeta 5"
+CLI> mkdir -p "carpeta 6"/"carpeta 7"
+CLI> ls
+ carpeta     'carpeta 2'  'carpeta 4'  'carpeta 6'   dir2   dir4
+'carpeta 1'  'carpeta 3'  'carpeta 5'   dir1	     dir3   otra
+CLI> ls > listado.txt
+CLI> cat listado.txt
+carpeta
+carpeta 1
+carpeta 2
+carpeta 3
+carpeta 4
+carpeta 5
+carpeta 6
+dir1
+dir2
+dir3
+dir4
+listado.txt
+otra
+CLI> echo "Ingreso: 100" > dato_1.txt
+CLI> echo "Gasto: 60" > dato_2.txt
+CLI> echo "Ahorro: 40" > dato_3.txt
+CLI> cat dato_1.txt dato_2.txt dato_3.txt
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+CLI> cat dato_?.txt
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+CLI> cat dato_*
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+CLI> # > reemplaza y >> agrega al contenido existente
+CLI> cat dato_* > combinado.txt
+CLI> cat combinado.txt
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+CLI> cat dato_* > combinado.txt
+CLI> wc -l combinado.txt
+3 combinado.txt
+CLI> cat dato_* >> combinado.txt
+CLI> echo "Saldo revisado" >> combinado.txt
+CLI> cat combinado.txt
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+Saldo revisado
+CLI> wc -l combinado.txt
+7 combinado.txt
+CLI> # Linux distingue mayusculas de minusculas
+CLI> echo "minuscula" > a.txt
+CLI> echo "mayuscula" > A.TXT
+CLI> echo "mixto" > A.txt
+CLI> ls a.txt A.TXT A.txt
+A.TXT  A.txt  a.txt
+CLI> cat a.txt A.TXT A.txt
+minuscula
+mayuscula
+mixto
+CLI> # 3. Mover, copiar y renombrar
+CLI> mv combinado.txt dir1
+CLI> ls dir1
+combinado.txt
+CLI> mv dir1/* .
+CLI> mv combinado.txt dato_* dir3 dir2
+CLI> ls dir2
+combinado.txt  dato_1.txt  dato_2.txt  dato_3.txt  dir3
+CLI> mv dir2/combinado.txt dir4/dir5/dir6
+CLI> ls dir4/dir5/dir6
+combinado.txt
+CLI> cp dir4/dir5/dir6/combinado.txt .
+CLI> cp combinado.txt copia_combinado.txt
+CLI> mv copia_combinado.txt combinado_respaldo.txt
+CLI> mv "carpeta 1" carpeta_1
+CLI> mv "carpeta 2" carpeta_2
+CLI> mv "carpeta 3" carpeta_3
+CLI> mv "carpeta 4" carpeta_4
+CLI> mv "carpeta 5" carpeta_5
+CLI> mv "carpeta 6" carpeta_6
+CLI> ls
+A.TXT  carpeta	  carpeta_3  carpeta_6		     dir1  listado.txt
+A.txt  carpeta_1  carpeta_4  combinado.txt	     dir2  otra
+a.txt  carpeta_2  carpeta_5  combinado_respaldo.txt  dir4
+CLI> # 4. Borrar solamente archivos de practica
+CLI> pwd
+/tmp/econ520_tarea01_QVM4MJ
+CLI> rm dir4/dir5/dir6/combinado.txt combinado_respaldo.txt
+CLI> # Error intencional: rm sin -r no elimina directorios
+CLI> rm carpeta_*
+rm: cannot remove 'carpeta_1': Is a directory
+rm: cannot remove 'carpeta_2': Is a directory
+rm: cannot remove 'carpeta_3': Is a directory
+rm: cannot remove 'carpeta_4': Is a directory
+rm: cannot remove 'carpeta_5': Is a directory
+rm: cannot remove 'carpeta_6': Is a directory
+CLI> <carpeta_6 no esta vacia y produce un error esperado
+CLI> rmdir carpeta_*
+rmdir: failed to remove 'carpeta_6': Directory not empty
+CLI> rm -r carpeta_6
+CLI> mkdir -p vacio/interior
+CLI> rmdir -p vacio/interior
+CLI> ls
+A.TXT  a.txt	combinado.txt  dir2  listado.txt
+A.txt  carpeta	dir1	       dir4  otra
+CLI> # 5. Un poco de plomeria: wc, tuberias, sort y uniq
+CLI> wc -l combinado.txt
+7 combinado.txt
+CLI> # Listar la carpeta de practica en vez de archivos personales
+CLI> ls . > lista_temporal.txt
+CLI> wc -l lista_temporal.txt
+11 lista_temporal.txt
+CLI> rm lista_temporal.txt
+CLI> <elemento menos porque se elimino lista_temporal.txt
+CLI> ls . | wc -l
+10
+CLI> ls /etc | wc -l
+153
+CLI> # uniq solo elimina repeticiones consecutivas
+CLI> cat combinado.txt | uniq | wc -l
+7
+CLI> cat combinado.txt | uniq
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+Saldo revisado
+CLI> # Ayuda integrada de los comandos
+CLI> uniq --help | head -n 8
+Usage: uniq [OPTION]... [INPUT [OUTPUT]]
+Filter adjacent matching lines from INPUT (or standard input),
+writing to OUTPUT (or standard output).
+
+With no options, matching lines are merged to the first occurrence.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -c, --count           prefix lines by the number of occurrences
+CLI> sort --help | head -n 6
+Usage: sort [OPTION]... [FILE]...
+  or:  sort [OPTION]... --files0-from=F
+Write sorted concatenation of all FILE(s) to standard output.
+
+With no FILE, or when FILE is -, read standard input.
+
+CLI> # Ordenar primero agrupa las lineas repetidas
+CLI> sort combinado.txt
+Ahorro: 40
+Ahorro: 40
+Gasto: 60
+Gasto: 60
+Ingreso: 100
+Ingreso: 100
+Saldo revisado
+CLI> sort combinado.txt | uniq
+Ahorro: 40
+Gasto: 60
+Ingreso: 100
+Saldo revisado
+CLI> sort combinado.txt | uniq | wc -l
+4
+CLI> sort combinado.txt | uniq -c
+      2 Ahorro: 40
+      2 Gasto: 60
+      2 Ingreso: 100
+      1 Saldo revisado
+CLI> sort combinado.txt | uniq > lineas_unicas.txt
+CLI> cat lineas_unicas.txt
+Ahorro: 40
+Gasto: 60
+Ingreso: 100
+Saldo revisado
+CLI> # 6. Ejercicios adicionales de la diapositiva 14
+CLI> mkdir -p adicional/datos/originales
+CLI> echo "texto de prueba" > adicional/datos/originales/archivo.txt
+CLI> cp adicional/datos/originales/archivo.txt adicional/copia.txt
+CLI> mv adicional/copia.txt adicional/renombrado.txt
+CLI> cat adicional/renombrado.txt
+texto de prueba
+CLI> rm adicional/renombrado.txt
+CLI> mkdir adicional/vacia
+CLI> rmdir adicional/vacia
+CLI> printf 'oro\nbitcoin\noro\neuro\nbitcoin\n' > adicional/activos.txt
+CLI> wc -l adicional/activos.txt
+5 adicional/activos.txt
+CLI> sort adicional/activos.txt | uniq
+bitcoin
+euro
+oro
+CLI> sort adicional/activos.txt | uniq -c
+      2 bitcoin
+      1 euro
+      2 oro
+CLI> sort adicional/activos.txt | uniq | wc -l
+3
+CLI> # Resultado: cinco registros y tres activos distintos
+CLI> # 7. Cancelar un programa interactivo: cat y Ctrl+C
+CLI> cat
+Texto de prueba
+Texto de prueba
+^C
+CLI> # Ctrl+C interrumpe cat y devuelve el control a la terminal.
+CLI> # 8. Leer con un paginador; q permite salir.
+CLI> less -X combinado.txt
+WARNING: terminal is not fully functional
+Press RETURN to continue 
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+Ingreso: 100
+Gasto: 60
+Ahorro: 40
+Saldo revisado
+combinado.txt (END)CLI> # Fin de la practica
+CLI> exit
+exit
+
+Script done on 2026-09-11 01:34:57-04:00 [COMMAND_EXIT_CODE="0"]
